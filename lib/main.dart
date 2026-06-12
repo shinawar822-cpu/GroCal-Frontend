@@ -10,14 +10,16 @@ class CreatorGrowthApp extends StatelessWidget {
   const CreatorGrowthApp({super.key});
   @override
   Widget build(BuildContext context) => MultiProvider(
-    providers: AppProviders.providers,
-    child: MaterialApp(
-      title: 'Creator Growth',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      initialRoute: AppRouter.splash,
-      onGenerateRoute: AppRouter.generateRoute,
-    ),
-  );
+        providers: AppProviders.providers,
+        child: MaterialApp(
+          title: 'Creator Growth',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          initialRoute: AppRouter.splash,
+          onGenerateRoute: AppRouter.generateRoute,
+        ),
+      );
 }
+
+// This is the main entry point of the app. It sets up the MaterialApp with routing, theming, and state management using Provider. The app starts with the SplashScreen and can navigate to other screens based on the defined routes in AppRouter.
