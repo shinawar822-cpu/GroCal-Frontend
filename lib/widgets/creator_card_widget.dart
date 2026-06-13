@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/models/user_model.dart';
 import '../core/theme/app_theme.dart';
+import '../core/routes/app_router.dart';
 
 class CreatorCardWidget extends StatelessWidget {
   final UserModel creator;
@@ -14,32 +15,40 @@ class CreatorCardWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(12)),
         child: Row(
           children: [
-            CircleAvatar(
-                radius: 24,
-                backgroundImage: creator.profileImage != null
-                    ? NetworkImage(creator.profileImage!)
-                    : null),
+            InkWell(
+              onTap: () => Navigator.pushNamed(context, AppRouter.profile,
+                  arguments: {'user': creator}),
+              child: CircleAvatar(
+                  radius: 24,
+                  backgroundImage: creator.profileImage != null
+                      ? NetworkImage(creator.profileImage!)
+                      : null),
+            ),
             const SizedBox(width: 12),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(children: [
-                    Text(creator.fullName,
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                    if (creator.isVerified) ...[
-                      const SizedBox(width: 4),
-                      const Icon(Icons.verified,
-                          size: 14, color: AppTheme.primaryColor)
-                    ],
-                  ]),
-                  Text('@${creator.username.replaceAll('@', '')}',
-                      style: const TextStyle(
-                          color: AppTheme.textSecondary, fontSize: 12)),
-                  Text(creator.niche,
-                      style: const TextStyle(
-                          color: AppTheme.textHint, fontSize: 11)),
-                ],
+              child: InkWell(
+                onTap: () => Navigator.pushNamed(context, AppRouter.profile,
+                    arguments: {'user': creator}),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      Text(creator.fullName,
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      if (creator.isVerified) ...[
+                        const SizedBox(width: 4),
+                        const Icon(Icons.verified,
+                            size: 14, color: AppTheme.primaryColor)
+                      ],
+                    ]),
+                    Text('@${creator.username.replaceAll('@', '')}',
+                        style: const TextStyle(
+                            color: AppTheme.textSecondary, fontSize: 12)),
+                    Text(creator.niche,
+                        style: const TextStyle(
+                            color: AppTheme.textHint, fontSize: 11)),
+                  ],
+                ),
               ),
             ),
             ElevatedButton(

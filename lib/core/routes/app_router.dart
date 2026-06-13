@@ -13,6 +13,7 @@ import '../../screens/tasks/create_task_screen.dart';
 import '../../screens/tasks/task_detail_screen.dart';
 import '../../screens/tasks/submit_proof_screen.dart';
 import '../../screens/profile/profile_screen.dart';
+import '../models/user_model.dart';
 import '../../screens/profile/edit_profile_screen.dart';
 import '../../screens/notifications/notifications_screen.dart';
 import '../../screens/settings/settings_screen.dart';
@@ -77,7 +78,10 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (_) => SubmitProofScreen(taskId: args?['taskId'] ?? ''));
       case profile:
-        return MaterialPageRoute(builder: (_) => const ProfileScreen());
+        final UserModel? userArg = args?['user'] as UserModel?;
+        final String? userIdArg = args?['userId'] as String?;
+        return MaterialPageRoute(
+            builder: (_) => ProfileScreen(user: userArg, userId: userIdArg));
       case editProfile:
         return MaterialPageRoute(builder: (_) => const EditProfileScreen());
       case notifications:

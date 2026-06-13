@@ -23,19 +23,28 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: Row(
           children: [
-            CircleAvatar(
-                radius: 18, backgroundImage: NetworkImage(user.profileImage!)),
+            InkWell(
+              onTap: () => Navigator.pushNamed(context, AppRouter.profile,
+                  arguments: {'user': user}),
+              child: CircleAvatar(
+                  radius: 18,
+                  backgroundImage: NetworkImage(user.profileImage!)),
+            ),
             const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Welcome, ${user.fullName}',
-                    style: const TextStyle(
-                        fontSize: 14, fontWeight: FontWeight.bold)),
-                Text(user.level,
-                    style: const TextStyle(
-                        fontSize: 11, color: AppTheme.textSecondary)),
-              ],
+            InkWell(
+              onTap: () => Navigator.pushNamed(context, AppRouter.profile,
+                  arguments: {'user': user}),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Welcome, ${user.fullName}',
+                      style: const TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.bold)),
+                  Text(user.level,
+                      style: const TextStyle(
+                          fontSize: 11, color: AppTheme.textSecondary)),
+                ],
+              ),
             ),
           ],
         ),

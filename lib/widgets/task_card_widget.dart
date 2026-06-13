@@ -71,17 +71,26 @@ class TaskCardWidget extends StatelessWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        CircleAvatar(
-                            radius: 10,
-                            backgroundImage: task.creatorImage != null
-                                ? NetworkImage(task.creatorImage!)
-                                : null),
+                        InkWell(
+                          onTap: () => Navigator.pushNamed(
+                              context, AppRouter.profile,
+                              arguments: {'userId': task.creatorId}),
+                          child: CircleAvatar(
+                              radius: 10,
+                              backgroundImage: task.creatorImage != null
+                                  ? NetworkImage(task.creatorImage!)
+                                  : null),
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
-                            child: Text(task.creatorName,
-                                style: const TextStyle(
-                                    color: AppTheme.textSecondary,
-                                    fontSize: 12))),
+                            child: InkWell(
+                          onTap: () => Navigator.pushNamed(
+                              context, AppRouter.profile,
+                              arguments: {'userId': task.creatorId}),
+                          child: Text(task.creatorName,
+                              style: const TextStyle(
+                                  color: AppTheme.textSecondary, fontSize: 12)),
+                        )),
                       ],
                     ),
                     const SizedBox(height: 8),

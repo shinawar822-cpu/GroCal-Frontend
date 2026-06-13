@@ -11,13 +11,21 @@ class CommunityScreen extends StatefulWidget {
   State<CommunityScreen> createState() => _CommunityScreenState();
 }
 
-class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProviderStateMixin {
+class _CommunityScreenState extends State<CommunityScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
-  void initState() { super.initState(); _tabController = TabController(length: 4, vsync: this); }
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 4, vsync: this);
+  }
+
   @override
-  void dispose() { _tabController.dispose(); super.dispose(); }
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +35,12 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
         title: const Text('Community'),
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [Tab(text: 'Feed'), Tab(text: 'Communities'), Tab(text: 'Groups'), Tab(text: 'Chat')],
+          tabs: const [
+            Tab(text: 'Feed'),
+            Tab(text: 'Communities'),
+            Tab(text: 'Groups'),
+            Tab(text: 'Chat')
+          ],
         ),
       ),
       body: TabBarView(
@@ -56,22 +69,42 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(children: [
-                  CircleAvatar(backgroundImage: post.userImage != null ? NetworkImage(post.userImage!) : null),
+                  InkWell(
+                      onTap: () => Navigator.pushNamed(
+                          context, AppRouter.profile,
+                          arguments: {'userId': post.userId}),
+                      child: CircleAvatar(
+                          backgroundImage: post.userImage != null
+                              ? NetworkImage(post.userImage!)
+                              : null)),
                   const SizedBox(width: 12),
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(post.userName, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    Text(_formatTime(post.createdAt), style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
-                  ]),
+                  InkWell(
+                      onTap: () => Navigator.pushNamed(
+                          context, AppRouter.profile,
+                          arguments: {'userId': post.userId}),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(post.userName,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
+                            Text(_formatTime(post.createdAt),
+                                style: const TextStyle(
+                                    color: AppTheme.textSecondary,
+                                    fontSize: 12)),
+                          ])),
                 ]),
                 const SizedBox(height: 12),
                 Text(post.content),
                 const SizedBox(height: 12),
                 Row(children: [
-                  const Icon(Icons.favorite_border, color: AppTheme.textSecondary),
+                  const Icon(Icons.favorite_border,
+                      color: AppTheme.textSecondary),
                   const SizedBox(width: 4),
                   Text('${post.likesCount}'),
                   const SizedBox(width: 24),
-                  const Icon(Icons.chat_bubble_outline, color: AppTheme.textSecondary),
+                  const Icon(Icons.chat_bubble_outline,
+                      color: AppTheme.textSecondary),
                   const SizedBox(width: 4),
                   Text('${post.commentsCount}'),
                 ]),
@@ -83,12 +116,18 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
     );
   }
 
-  Widget _buildCommunitiesTab(BuildContext context, CommunityProvider provider) {
+  Widget _buildCommunitiesTab(
+      BuildContext context, CommunityProvider provider) {
     return GridView.builder(
       padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: 0.85),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 0.85),
       itemCount: provider.communities.length,
-      itemBuilder: (ctx, i) => CommunityCardWidget(community: provider.communities[i]),
+      itemBuilder: (ctx, i) =>
+          CommunityCardWidget(community: provider.communities[i]),
     );
   }
 
@@ -100,11 +139,19 @@ class _CommunityScreenState extends State<CommunityScreen> with SingleTickerProv
       itemBuilder: (ctx, i) {
         final chat = chatProvider.chats[i];
         return ListTile(
-          onTap: () => Navigator.pushNamed(context, AppRouter.chat, arguments: {'chatId': chat.id, 'userName': chat.userName}),
-          leading: CircleAvatar(backgroundImage: chat.userImage != null ? NetworkImage(chat.userImage!) : null),
-          title: Text(chat.userName, style: const TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: Text(chat.lastMessage, maxLines: 1, overflow: TextOverflow.ellipsis),
-          trailing: Text(_formatTime(chat.lastMessageTime), style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+          onTap: () => Navigator.pushNamed(context, AppRouter.chat,
+              arguments: {'chatId': chat.id, 'userName': chat.userName}),
+          leading: CircleAvatar(
+              backgroundImage: chat.userImage != null
+                  ? NetworkImage(chat.userImage!)
+                  : null),
+          title: Text(chat.userName,
+              style: const TextStyle(fontWeight: FontWeight.bold)),
+          subtitle: Text(chat.lastMessage,
+              maxLines: 1, overflow: TextOverflow.ellipsis),
+          trailing: Text(_formatTime(chat.lastMessageTime),
+              style:
+                  const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
         );
       },
     );

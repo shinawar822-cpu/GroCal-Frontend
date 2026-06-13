@@ -67,13 +67,23 @@ class TaskDetailScreen extends StatelessWidget {
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      CircleAvatar(
-                          radius: 16,
-                          backgroundImage: task.creatorImage != null
-                              ? NetworkImage(task.creatorImage!)
-                              : null),
+                      InkWell(
+                        onTap: () => Navigator.pushNamed(
+                            context, AppRouter.profile,
+                            arguments: {'userId': task.creatorId}),
+                        child: CircleAvatar(
+                            radius: 16,
+                            backgroundImage: task.creatorImage != null
+                                ? NetworkImage(task.creatorImage!)
+                                : null),
+                      ),
                       const SizedBox(width: 8),
-                      Text(task.creatorName),
+                      InkWell(
+                        onTap: () => Navigator.pushNamed(
+                            context, AppRouter.profile,
+                            arguments: {'userId': task.creatorId}),
+                        child: Text(task.creatorName),
+                      ),
                       const Spacer(),
                       OutlinedButton(
                           onPressed: () {}, child: const Text('Follow')),

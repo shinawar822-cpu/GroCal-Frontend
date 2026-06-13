@@ -160,13 +160,21 @@ class _TasksScreenState extends State<TasksScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(children: [
-                  CircleAvatar(
-                      backgroundImage: proof.userImage != null
-                          ? NetworkImage(proof.userImage!)
-                          : null),
+                  InkWell(
+                    onTap: () => Navigator.pushNamed(context, AppRouter.profile,
+                        arguments: {'userId': proof.userId}),
+                    child: CircleAvatar(
+                        backgroundImage: proof.userImage != null
+                            ? NetworkImage(proof.userImage!)
+                            : null),
+                  ),
                   const SizedBox(width: 12),
-                  Text(proof.userName,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  InkWell(
+                    onTap: () => Navigator.pushNamed(context, AppRouter.profile,
+                        arguments: {'userId': proof.userId}),
+                    child: Text(proof.userName,
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                  ),
                 ]),
                 const SizedBox(height: 12),
                 Text('Submitted: ${proof.submittedLink}',
