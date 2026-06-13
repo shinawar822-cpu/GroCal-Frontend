@@ -5,6 +5,8 @@ import '../../core/providers/app_providers.dart';
 import '../../core/routes/app_router.dart';
 import '../../core/theme/app_theme.dart';
 import '../../widgets/task_card_widget.dart';
+import '../../widgets/filter_bottom_sheet.dart';
+import '../../widgets/search_bar_widget.dart';
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key});
@@ -15,6 +17,16 @@ class TasksScreen extends StatefulWidget {
 class _TasksScreenState extends State<TasksScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final _searchController = TextEditingController();
+  String _searchQuery = '';
+  Map<String, String> _filters = {
+    'niche': 'All',
+    'platform': 'All',
+    'country': 'All Countries',
+    'language': 'English',
+    'followers': 'All',
+    'activity': 'All'
+  };
 
   @override
   void initState() {
@@ -25,13 +37,25 @@ class _TasksScreenState extends State<TasksScreen>
   @override
   void dispose() {
     _tabController.dispose();
+    _searchController.dispose();
     super.dispose();
+  }
+
+  List _filteredTasks(TaskProvider provider) {
+    return provider.tasks.where((task) {
+      final query = _searchQuery.toLowerCase();
+      return query.isEmpty ||
+          task.title.toLowerCase().contains(query) ||
+          task.creatorName.toLowerCase().contains(query) ||
+          task.niche.toLowerCase().contains(query);
+    }).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     final taskProvider = Provider.of<TaskProvider>(context);
     final user = Provider.of<UserProvider>(context).currentUser!;
+    final tasks = _filteredTasks(taskProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -60,12 +84,30 @@ class _TasksScreenState extends State<TasksScreen>
           Tab(text: 'Review')
         ]),
       ),
-      body: TabBarView(
-        controller: _tabController,
+      body: Column(
         children: [
-          _buildAvailableTab(context, taskProvider),
-          _buildMyTasksTab(context, user),
-          _buildReviewTab(context, taskProvider),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: SearchBarWidget(
+              controller: _searchController,
+              placeholder: 'Search tasks, creators, platforms',
+              onChanged: (value) => setState(() => _searchQuery = value),
+              onTapFilter: () async {
+                final result = await FilterBottomSheet.open(context, _filters);
+                if (result != null) setState(() => _filters = result);
+              },
+            ),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildAvailableTab(context, taskProvider, tasks),
+                _buildMyTasksTab(context, user),
+                _buildReviewTab(context, taskProvider),
+              ],
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -76,20 +118,27 @@ class _TasksScreenState extends State<TasksScreen>
     );
   }
 
-  Widget _buildAvailableTab(BuildContext context, TaskProvider provider) =>
-      ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: provider.tasks.length,
-        itemBuilder: (ctx, i) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: TaskCardWidget(task: provider.tasks[i])),
-      );
+  Widget _buildAvailableTab(
+          BuildContext context, TaskProvider provider, List tasks) =>
+      tasks.isEmpty
+          ? const Center(child: Text('No tasks found'))
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: tasks.length,
+              itemBuilder: (ctx, i) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: TaskCardWidget(task: tasks[i])),
+            );
 
   Widget _buildMyTasksTab(BuildContext context, UserModel user) => Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text('Tasks Created: ${user.tasksCreated}',
               style: const TextStyle(fontSize: 18)),
+          const SizedBox(height: 12),
           Text('Tasks Completed: ${user.tasksCompleted}',
+              style: const TextStyle(fontSize: 18)),
+          const SizedBox(height: 12),
+          Text('Reviewer Level: ${user.reviewerTrustLevel}',
               style: const TextStyle(fontSize: 18)),
         ]),
       );
@@ -108,6 +157,7 @@ class _TasksScreenState extends State<TasksScreen>
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(children: [
                   CircleAvatar(
@@ -119,8 +169,11 @@ class _TasksScreenState extends State<TasksScreen>
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                 ]),
                 const SizedBox(height: 12),
-                Text(proof.submittedLink,
+                Text('Submitted: ${proof.submittedLink}',
                     style: const TextStyle(color: AppTheme.textSecondary)),
+                const SizedBox(height: 8),
+                Text('Status: ${proof.status}',
+                    style: const TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 16),
                 Row(
                   children: [

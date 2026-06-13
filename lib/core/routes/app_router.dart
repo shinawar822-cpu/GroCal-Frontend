@@ -5,6 +5,7 @@ import '../../screens/auth/login_screen.dart';
 import '../../screens/auth/register_screen.dart';
 import '../../screens/home/main_screen.dart';
 import '../../screens/discover/discover_screen.dart';
+import '../../screens/discover/niche_page.dart';
 import '../../screens/community/community_screen.dart';
 import '../../screens/community/community_detail_screen.dart';
 import '../../screens/tasks/tasks_screen.dart';
@@ -26,6 +27,7 @@ class AppRouter {
       register = '/register';
   static const String main = '/main',
       discover = '/discover',
+      nichePage = '/niche',
       community = '/community',
       tasks = '/tasks',
       profile = '/profile';
@@ -55,6 +57,9 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const MainScreen());
       case discover:
         return MaterialPageRoute(builder: (_) => const DiscoverScreen());
+      case nichePage:
+        return MaterialPageRoute(
+            builder: (_) => NichePage(niche: args?['niche'] ?? 'All'));
       case community:
         return MaterialPageRoute(builder: (_) => const CommunityScreen());
       case communityDetail:

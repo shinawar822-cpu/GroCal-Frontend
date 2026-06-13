@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../core/services/dummy_data.dart';
-import '../../core/theme/app_theme.dart';
 import '../../core/utils/constants.dart';
 import '../../widgets/creator_card_widget.dart';
+import '../../widgets/filter_bottom_sheet.dart';
+import '../../widgets/search_bar_widget.dart';
+import '../../widgets/niche_chip_widget.dart';
 
 class DiscoverScreen extends StatefulWidget {
   const DiscoverScreen({super.key});
@@ -12,59 +14,104 @@ class DiscoverScreen extends StatefulWidget {
 
 class _DiscoverScreenState extends State<DiscoverScreen> {
   String _selectedNiche = 'All';
+  String _searchQuery = '';
+  Map<String, String> _filters = {
+    'niche': 'All',
+    'platform': 'All',
+    'country': 'All Countries',
+    'language': 'English',
+    'followers': 'All',
+    'activity': 'All'
+  };
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List creatorsFiltered() {
+    return DummyData.suggestedCreators.where((creator) {
+      final matchesSearch = _searchQuery.isEmpty ||
+          creator.fullName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          creator.username.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+          creator.niche.toLowerCase().contains(_searchQuery.toLowerCase());
+      final matchesNiche =
+          _filters['niche'] == 'All' || creator.niche == _filters['niche'];
+      final matchesPlatform = _filters['platform'] == 'All' ||
+          creator.platforms.contains(_filters['platform']);
+      final matchesSelectNiche =
+          _selectedNiche == 'All' || creator.niche == _selectedNiche;
+      return matchesSearch &&
+          matchesNiche &&
+          matchesPlatform &&
+          matchesSelectNiche;
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final creators = DummyData.suggestedCreators;
+    final creators = creatorsFiltered();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Discover'),
-        actions: [IconButton(icon: const Icon(Icons.tune), onPressed: () {})],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.filter_list),
+            onPressed: () async {
+              final result = await FilterBottomSheet.open(context, _filters);
+              if (result != null) setState(() => _filters = result);
+            },
+          )
+        ],
       ),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Search creators...',
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: AppTheme.backgroundColor,
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none),
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 40,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: AppConstants.niches.take(6).length + 1,
-              itemBuilder: (ctx, i) {
-                final niche = i == 0 ? 'All' : AppConstants.niches[i - 1];
-                return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: ChoiceChip(
-                      label: Text(niche),
-                      selected: _selectedNiche == niche,
-                      onSelected: (s) => setState(() => _selectedNiche = niche),
-                      selectedColor: Theme.of(context).colorScheme.primary,
-                      backgroundColor: AppTheme.backgroundColor,
-                    ));
+            child: SearchBarWidget(
+              controller: _searchController,
+              placeholder: 'Search Creators, Communities, Niches',
+              onChanged: (value) => setState(() => _searchQuery = value),
+              onTapFilter: () async {
+                final result = await FilterBottomSheet.open(context, _filters);
+                if (result != null) setState(() => _filters = result);
               },
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: creators.length,
-              itemBuilder: (ctx, i) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: CreatorCardWidget(creator: creators[i])),
+          SizedBox(
+            height: 48,
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              scrollDirection: Axis.horizontal,
+              children: [
+                NicheChipWidget(
+                    label: 'All',
+                    selected: _selectedNiche == 'All',
+                    onTap: () => setState(() => _selectedNiche = 'All')),
+                ...AppConstants.niches.take(8).map((niche) => Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: NicheChipWidget(
+                          label: niche,
+                          selected: _selectedNiche == niche,
+                          onTap: () => setState(() => _selectedNiche = niche)),
+                    )),
+              ],
             ),
+          ),
+          Expanded(
+            child: creators.isEmpty
+                ? const Center(child: Text('No creators found'))
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: creators.length,
+                    itemBuilder: (ctx, i) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: CreatorCardWidget(creator: creators[i]),
+                    ),
+                  ),
           ),
         ],
       ),
