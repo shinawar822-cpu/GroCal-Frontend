@@ -19,13 +19,15 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = Provider.of<UserProvider>(context).currentUser!;
     final displayedUser = user ??
         (userId != null
             ? DummyData.suggestedCreators.firstWhere(
                 (u) => u.id == userId,
-                orElse: () => DummyData.currentUser,
+                orElse: () => currentUser,
               )
-            : Provider.of<UserProvider>(context).currentUser!);
+            : currentUser);
+    final isCurrentUser = displayedUser.id == currentUser.id;
 
     return Scaffold(
       body: CustomScrollView(
@@ -34,13 +36,14 @@ class ProfileScreen extends StatelessWidget {
             expandedHeight: 280,
             pinned: true,
             actions: [
-              IconButton(
-                icon: const Icon(Icons.settings),
-                onPressed: () => Navigator.pushNamed(
-                  context,
-                  AppRouter.settingsRoute,
+              if (isCurrentUser)
+                IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: () => Navigator.pushNamed(
+                    context,
+                    AppRouter.settingsRoute,
+                  ),
                 ),
-              ),
             ],
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
@@ -70,7 +73,6 @@ class ProfileScreen extends StatelessWidget {
                             : null,
                       ),
                       const SizedBox(height: 12),
-
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -91,16 +93,13 @@ class ProfileScreen extends StatelessWidget {
                           ],
                         ],
                       ),
-
                       Text(
                         '@${displayedUser.username.replaceAll('@', '')}',
                         style: TextStyle(
                           color: Colors.white.withOpacity(0.8),
                         ),
                       ),
-
                       const SizedBox(height: 8),
-
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -124,7 +123,6 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           ),
-
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -155,23 +153,20 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 24),
-
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: () => Navigator.pushNamed(
-                        context,
-                        AppRouter.editProfile,
+                  if (isCurrentUser)
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () => Navigator.pushNamed(
+                          context,
+                          AppRouter.editProfile,
+                        ),
+                        icon: const Icon(Icons.edit),
+                        label: const Text('Edit Profile'),
                       ),
-                      icon: const Icon(Icons.edit),
-                      label: const Text('Edit Profile'),
                     ),
-                  ),
-
-                  const SizedBox(height: 24),
-
+                  if (isCurrentUser) const SizedBox(height: 24),
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -183,15 +178,12 @@ class ProfileScreen extends StatelessWidget {
                       children: [
                         Text(
                           'Achievements',
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                         const SizedBox(height: 12),
-
                         Row(
                           children: [
                             _buildBadge(
@@ -253,9 +245,7 @@ class ProfileScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: unlocked
-                  ? AppTheme.primaryColor
-                  : AppTheme.textLight,
+              color: unlocked ? AppTheme.primaryColor : AppTheme.textLight,
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -269,9 +259,7 @@ class ProfileScreen extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: 10,
-              color: unlocked
-                  ? AppTheme.textPrimary
-                  : AppTheme.textHint,
+              color: unlocked ? AppTheme.textPrimary : AppTheme.textHint,
             ),
           ),
         ],
@@ -280,8 +268,6 @@ class ProfileScreen extends StatelessWidget {
   }
 
   String _formatNum(int n) {
-    return n >= 1000
-        ? '${(n / 1000).toStringAsFixed(1)}K'
-        : n.toString();
+    return n >= 1000 ? '${(n / 1000).toStringAsFixed(1)}K' : n.toString();
   }
 }
