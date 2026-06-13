@@ -215,4 +215,80 @@ class DummyData {
             isRead: true,
             createdAt: DateTime.now().subtract(const Duration(minutes: 25))),
       ];
+
+  static List<CommentModel> getPostComments(String postId) => [
+        CommentModel(
+            id: 'comment_1',
+            postId: postId,
+            userId: 'user_2',
+            userName: 'Sarah Chen',
+            userImage:
+                'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?w=150',
+            content: 'Amazing content! Really helpful.',
+            likesCount: 12,
+            createdAt: DateTime.now().subtract(const Duration(hours: 2))),
+        CommentModel(
+            id: 'comment_2',
+            postId: postId,
+            userId: 'user_3',
+            userName: 'Mike Rivera',
+            userImage:
+                'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?w=150',
+            content: 'Would love to collaborate on this!',
+            likesCount: 8,
+            createdAt: DateTime.now().subtract(const Duration(minutes: 45))),
+      ];
+
+  static List<GroupModel> get groups => [
+        GroupModel(
+            id: 'group_1',
+            name: 'Tech Creators Club',
+            description: 'Connect with fellow tech content creators',
+            image:
+                'https://images.pexels.com/photos/3182812/pexels-photo-3182812.jpeg?w=400',
+            memberIds: ['user_1', 'user_2', 'user_3'],
+            isPrivate: false,
+            createdAt: DateTime(2024, 1, 10)),
+        GroupModel(
+            id: 'group_2',
+            name: 'Collab Network',
+            description: 'Find collaboration opportunities',
+            image:
+                'https://images.pexels.com/photos/3182813/pexels-photo-3182813.jpeg?w=400',
+            memberIds: ['user_1', 'user_2'],
+            isPrivate: true,
+            createdAt: DateTime(2024, 2, 5)),
+      ];
+
+  static GroupModel get platformAdminGroup => GroupModel(
+        id: 'platform_admin',
+        name: 'Creator Growth Guidance',
+        description: 'Official announcements and guidance from the platform',
+        image:
+            'https://images.pexels.com/photos/3182814/pexels-photo-3182814.jpeg?w=400',
+        memberIds: ['user_1', 'user_2', 'user_3'],
+        isPrivate: false,
+        createdAt: DateTime(2024, 1, 1),
+      );
+
+  static List<GroupMessageModel> getGroupMessages(String groupId) => [
+        GroupMessageModel(
+            id: 'gmsg_1',
+            groupId: groupId,
+            senderId: 'admin',
+            senderName: 'Admin',
+            content: 'Welcome to the Creator Growth platform!',
+            senderImage:
+                'https://images.pexels.com/photos/3182814/pexels-photo-3182814.jpeg?w=150',
+            createdAt: DateTime.now().subtract(const Duration(days: 1))),
+        GroupMessageModel(
+            id: 'gmsg_2',
+            groupId: groupId,
+            senderId: 'user_2',
+            senderName: 'Sarah Chen',
+            content: 'Thanks for the guidance!',
+            senderImage:
+                'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?w=150',
+            createdAt: DateTime.now().subtract(const Duration(hours: 5))),
+      ];
 }

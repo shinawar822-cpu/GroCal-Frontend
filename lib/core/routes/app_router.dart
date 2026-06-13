@@ -8,12 +8,17 @@ import '../../screens/discover/discover_screen.dart';
 import '../../screens/discover/niche_page.dart';
 import '../../screens/community/community_screen.dart';
 import '../../screens/community/community_detail_screen.dart';
+import '../../screens/community/comments_page.dart';
+import '../../screens/community/groups_page.dart';
+import '../../screens/community/admin_group_page.dart';
+import '../../screens/community/group_detail_screen.dart';
 import '../../screens/tasks/tasks_screen.dart';
 import '../../screens/tasks/create_task_screen.dart';
 import '../../screens/tasks/task_detail_screen.dart';
 import '../../screens/tasks/submit_proof_screen.dart';
 import '../../screens/profile/profile_screen.dart';
 import '../models/user_model.dart';
+import '../models/community_model.dart';
 import '../../screens/profile/edit_profile_screen.dart';
 import '../../screens/notifications/notifications_screen.dart';
 import '../../screens/settings/settings_screen.dart';
@@ -41,7 +46,11 @@ class AppRouter {
   static const String creditHistory = '/credit-history',
       messages = '/messages',
       chat = '/chat',
-      notifications = '/notifications';
+      notifications = '/notifications',
+      comments = '/comments',
+      groups = '/groups',
+      adminGroup = '/admin-group',
+      groupDetail = '/group-detail';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final args = settings.arguments as Map<String, dynamic>?;
@@ -97,6 +106,27 @@ class AppRouter {
             builder: (_) => ChatScreen(
                 chatId: args?['chatId'] ?? '',
                 userName: args?['userName'] ?? ''));
+      case comments:
+        final PostModel post = args?['post'] ??
+            PostModel(
+                id: '',
+                communityId: '',
+                userId: '',
+                userName: '',
+                content: '',
+                createdAt: DateTime.now());
+        return MaterialPageRoute(
+            builder: (_) =>
+                CommentsPage(postId: args?['postId'] ?? '', post: post));
+      case groups:
+        return MaterialPageRoute(builder: (_) => const GroupsPage());
+      case groupDetail:
+        return MaterialPageRoute(
+            builder: (_) => GroupDetailScreen(
+                groupId: args?['groupId'] ?? '',
+                groupName: args?['groupName'] ?? ''));
+      case adminGroup:
+        return MaterialPageRoute(builder: (_) => const AdminGroupPage());
       default:
         return MaterialPageRoute(
             builder: (_) =>

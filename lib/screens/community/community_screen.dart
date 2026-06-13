@@ -4,6 +4,7 @@ import '../../core/providers/app_providers.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/routes/app_router.dart';
 import '../../widgets/community_card_widget.dart';
+import 'groups_page.dart';
 
 class CommunityScreen extends StatefulWidget {
   const CommunityScreen({super.key});
@@ -42,13 +43,20 @@ class _CommunityScreenState extends State<CommunityScreen>
             Tab(text: 'Chat')
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.admin_panel_settings),
+            tooltip: 'Admin Guidance',
+            onPressed: () => Navigator.pushNamed(context, AppRouter.adminGroup),
+          ),
+        ],
       ),
       body: TabBarView(
         controller: _tabController,
         children: [
           _buildFeedTab(context, communityProvider),
           _buildCommunitiesTab(context, communityProvider),
-          const Center(child: Text('Groups coming soon')),
+          const GroupsPage(),
           _buildChatTab(context),
         ],
       ),
@@ -103,10 +111,21 @@ class _CommunityScreenState extends State<CommunityScreen>
                   const SizedBox(width: 4),
                   Text('${post.likesCount}'),
                   const SizedBox(width: 24),
-                  const Icon(Icons.chat_bubble_outline,
-                      color: AppTheme.textSecondary),
-                  const SizedBox(width: 4),
-                  Text('${post.commentsCount}'),
+                  InkWell(
+                    onTap: () => Navigator.pushNamed(
+                      context,
+                      AppRouter.comments,
+                      arguments: {'postId': post.id, 'post': post},
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.chat_bubble_outline,
+                            color: AppTheme.textSecondary),
+                        const SizedBox(width: 4),
+                        Text('${post.commentsCount}'),
+                      ],
+                    ),
+                  ),
                 ]),
               ],
             ),
